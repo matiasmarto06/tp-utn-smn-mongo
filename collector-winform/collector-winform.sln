@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "collector-winform", "collector-winform.csproj", "{27DE927C-8218-4EDC-824D-52956F1D5C86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "data-access-layer", "..\data-access-layer\data-access-layer.csproj", "{145F80B0-BA5C-4AA2-9661-13045E2FB4F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "api-parser", "..\api-parser\api-parser.csproj", "{3880105E-11A4-47DE-8158-87392E1E5B8D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{27DE927C-8218-4EDC-824D-52956F1D5C86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27DE927C-8218-4EDC-824D-52956F1D5C86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27DE927C-8218-4EDC-824D-52956F1D5C86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{145F80B0-BA5C-4AA2-9661-13045E2FB4F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{145F80B0-BA5C-4AA2-9661-13045E2FB4F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{145F80B0-BA5C-4AA2-9661-13045E2FB4F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{145F80B0-BA5C-4AA2-9661-13045E2FB4F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3880105E-11A4-47DE-8158-87392E1E5B8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3880105E-11A4-47DE-8158-87392E1E5B8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3880105E-11A4-47DE-8158-87392E1E5B8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3880105E-11A4-47DE-8158-87392E1E5B8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

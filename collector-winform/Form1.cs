@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using api_parser;
 
 namespace collector_winform
 {
@@ -15,6 +9,9 @@ namespace collector_winform
         public Form1()
         {
             InitializeComponent();
+            Parser parser = new Parser();
+            MessageBox.Show(parser.GetContent());
+            Console.WriteLine(parser.GetContent());
         }
     }
 }

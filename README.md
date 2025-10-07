@@ -1,88 +1,54 @@
-# Weather Mongo CRUD
+# Proyecto: Sistema de Observaciones Meteorológicas con MongoDB
 
-## Descripción
+### Materia: Bases de Datos II  
+### Año: 2025  
+### Tecnología: MongoDB + C# (.NET 8) + Grafana  
+### Licencia: GNU General Public License v3.0
 
-Aplicación única en **C#** que actúa como:
+---
 
-* **Colector**: obtiene datos meteorológicos desde la API del SMN (o alternativamente Ogimet).
-* **CRUD**: permite crear, leer, actualizar y eliminar registros directamente en **MongoDB**.
+## 🧭 Descripción general
 
-La visualización de métricas se realiza con **Grafana** conectado a la base de datos.
+El proyecto consiste en el desarrollo de una **base de datos NoSQL** en **MongoDB** utilizada para almacenar y administrar **observaciones meteorológicas horarias** obtenidas en tiempo real desde la **API pública de Meteostat**.
 
-## 🏗️ Arquitectura
+El objetivo es demostrar el uso práctico de una base NoSQL en un contexto real, implementando un **colector automático de datos**, junto con un **módulo CRUD** (Create, Read, Update, Delete) desarrollado en **C# WinForms** que permite visualizar, modificar y gestionar los registros almacenados.  
+Los datos se presentan gráficamente mediante **Grafana**, conectado directamente a MongoDB.
 
-* **App C#**: un único ejecutable que integra colector y CRUD.
-* **MongoDB**: almacenamiento principal.
-* **Grafana**: visualización conectada a MongoDB.
+---
 
-```
-[ API GraphQL del SMN u Ogimet ]
-             ↓
-    [ Aplicación C# Colector & CRUD ]
-    - Obtiene datos periódicamente
-    - Inserta en MongoDB
-    - Expone CRUD (CLI o REST)
-             ↓
-        [ MongoDB Local ]
-    - Colección de observaciones
-    - Colección de estaciones (opcional)
-             ↓
-           [ Grafana ]
-    - Visualizaciones series temporales, mapas, estadísticas
-```
+## ⚙️ Arquitectura del sistema
 
-## Alcance
+[Meteostat API]
+↓
+[Aplicación C# - Colector + CRUD]
+↓
+[MongoDB Local]
+↓
+[Grafana - Visualización de métricas]
 
-* Descarga automática de datos vía API.
-* Inserción en MongoDB.
-* Operaciones CRUD (insertar, consultar con filtros, modificar, borrar).
-* Consola para activar/desactivar el colector y ejecutar comandos CRUD.
-* Visualización de datos en Grafana.
 
-## 📈 Ejemplos de Uso
+1. **Colector (C#):** obtiene observaciones meteorológicas de múltiples puntos del país (ej. Buenos Aires, Córdoba, Mendoza, Ushuaia).  
+2. **CRUD (C#):** permite ver, filtrar, editar o eliminar registros desde la misma aplicación.  
+3. **MongoDB Local:** almacena los documentos JSON de observaciones horarias.  
+4. **Grafana:** consulta la base y genera dashboards con temperatura, humedad, presión y viento en tiempo real.
 
- Monitorear condiciones en tiempo real de estaciones del SMN.
- Almacenar y analizar series históricas de datos meteorológicos.
- Calcular estadísticas (temperatura promedio diaria, máximas de viento).
- Visualizar tendencias entre múltiples estaciones mediante Grafana.
+---
 
-## Requisitos
+## 💾 Estructura de datos
 
-* MongoDB (instalación local)
-* .NET 8 / C#
-* Grafana
-
-## 🛠️ Stack Tecnológico
-
- Lenguaje C#  .NET 8
- Base de Datos MongoDB (instalación local)
- Fuente de Datos
-
-   Principal [API GraphQL del SMN](httpsgithub.comgastonpereyrasmnQL)
-   Alternativa [Ogimet](httpwww.ogimet.com)
- Visualización Grafana + plugin de MongoDB
-
-## Modelo de Datos (ejemplo)
+Cada documento en la colección `observaciones` sigue la estructura:
 
 ```json
 {
-  "stationId": "87645",
-  "name": "Aeroparque",
-  "datetime": "2025-09-30T15:00:00Z",
-  "temperature": 23.5,
-  "humidity": 62,
-  "pressure": 1012.3
+  "station": "Buenos Aires",
+  "latitude": -34.60,
+  "longitude": -58.38,
+  "time": "2025-10-07T00:00:00",
+  "temp": 13.3,
+  "dwpt": 6.4,
+  "rhum": 63,
+  "prcp": 0.0,
+  "wspd": 3.7,
+  "wdir": 211,
+  "pres": 1020.3
 }
-```
-
-## Instalación
-
-1. Instalar MongoDB local.
-2. Clonar este repositorio.
-3. Configurar la cadena de conexión en `appsettings.json`.
-4. Ejecutar la aplicación con `dotnet run`.
-5. Conectar Grafana a MongoDB para dashboards.
-
-## Licencia
-
-GNU General Public License v3.0
