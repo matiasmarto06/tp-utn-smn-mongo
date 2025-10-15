@@ -183,14 +183,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="main.cs">
+    <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="main.Designer.cs">
-      <DependentUpon>main.cs</DependentUpon>
+    <Compile Include="MainWindow.Designer.cs">
+      <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StationConfigure.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StationConfigure.Designer.cs">
+      <DependentUpon>StationConfigure.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StationsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StationsWindow.Designer.cs">
+      <DependentUpon>StationsWindow.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="MainWindow.resx">
+      <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -200,6 +215,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="StationConfigure.resx">
+      <DependentUpon>StationConfigure.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StationsWindow.resx">
+      <DependentUpon>StationsWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -218,6 +239,14 @@
     <ProjectReference Include="..\api-parser\api-parser.csproj">
       <Project>{3880105e-11a4-47de-8158-87392e1e5b8d}</Project>
       <Name>api-parser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\business-logic-layer\business-logic-layer.csproj">
+      <Project>{4933cd2a-5508-41e2-b6ad-74860cf328d9}</Project>
+      <Name>business-logic-layer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\data-access-layer\data-access-layer.csproj">
+      <Project>{145f80b0-ba5c-4aa2-9661-13045e2fb4f2}</Project>
+      <Name>data-access-layer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

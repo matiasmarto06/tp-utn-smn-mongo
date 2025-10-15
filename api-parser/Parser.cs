@@ -9,16 +9,16 @@ namespace api_parser
     {
         private RestClient Client;
         private RestRequest Request;
-        private string Content;
-        private readonly string ApiKey;
-        private readonly string ApiUrl;
-        private readonly string station;
+        private string Content { get; set; }
+        private string ApiKey { get; set; }
+        private string ApiUrl { get; set; }
+        private string Station { get; set; }
 
-        public Parser(string ApiKey_, string ApiUrl_, string station_)
+        public Parser(string apiKey, string apiUrl, string station)
         {
-            ApiKey = ApiKey_;
-            ApiUrl = ApiUrl_;
-            station = station_;
+            ApiKey = apiKey;
+            ApiUrl = apiUrl;
+            Station = station;
 
             UpdateContent();
         }
@@ -28,7 +28,7 @@ namespace api_parser
             string start = DateTime.Now.ToString("yyyy-MM-dd");
             string end = DateTime.Now.ToString("yyyy-MM-dd");
 
-            Client = new RestClient($"{ApiUrl}?station={station}&start={start}&end={end}&tz=America/Argentina/Buenos_Aires");
+            Client = new RestClient($"{ApiUrl}?station={Station}&start={start}&end={end}&tz=America/Argentina/Buenos_Aires");
             Request = new RestRequest();
             Request.Method = Method.Get;
             Request.AddHeader("x-rapidapi-key", ApiKey);
