@@ -229,6 +229,7 @@
   <ItemGroup>
     <Compile Include="ApiRequestLogDAL.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="MeasurementDAL.cs" />
     <Compile Include="StationDAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

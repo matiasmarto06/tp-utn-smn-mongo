@@ -10,7 +10,7 @@ namespace business_logic_layer
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         [BsonElement("station")]
-        public string StationName { get; set; }
+        public Station Station { get; set; }
 
         [BsonElement("timestamp")]
         public DateTime Timestamp { get; set; }

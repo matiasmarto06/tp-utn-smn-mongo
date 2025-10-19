@@ -1,10 +1,12 @@
-﻿using RestSharp;
+﻿using business_logic_layer;
+using data_access_layer;
+using MongoDB.Bson;
+using RestSharp;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using data_access_layer;
-using business_logic_layer;
 
 namespace api_parser
 {
@@ -12,11 +14,12 @@ namespace api_parser
     {
         private RestClient Client;
         private RestRequest Request;
-        private string Content { get; set; }
+        private List<Measurement> Content { get; set; }
         private string ApiKey { get; set; }
         private string ApiUrl { get; set; }
-        private string Station { get; set; }
-        public Parser(string station)
+        private Station Station { get; set; }
+
+        public Parser(Station station)
         {
             ApiKey = ConfigurationManager.AppSettings["MeteostatApiKey"];
             ApiUrl = ConfigurationManager.AppSettings["MeteostatHost"];
@@ -28,29 +31,26 @@ namespace api_parser
         {
             string start = DateTime.Now.ToString("yyyy-MM-dd");
             string end = DateTime.Now.ToString("yyyy-MM-dd");
-
-            Client = new RestClient($"{ApiUrl}?station={Station}&start={start}&end={end}&tz=America/Argentina/Buenos_Aires");
+            string config = $"{ApiUrl}?station={Station.Code}&start={start}&end={end}&tz=America/Argentina/Buenos_Aires";
+            Client = new RestClient(config);
             Request = new RestRequest();
             Request.Method = Method.Get;
             Request.AddHeader("x-rapidapi-key", ApiKey);
             Request.AddHeader("x-rapidapi-host", "meteostat.p.rapidapi.com");
-
             RestResponse response = Client.Execute(Request);
-            Content = response.Content;
-
-            Content = FilterToNow(Content);
-
             // Registrar consulta
             var logDAL = new ApiRequestLogDAL();
             var log = new ApiRequestLog
             {
-                StationName = Station,
+                Station = Station,
                 Timestamp = DateTime.Now,
                 IsScheduled = false, // O true si es programada
                 Success = response.IsSuccessful,
                 Message = response.IsSuccessful ? "OK" : response.ErrorMessage
             };
             _ = logDAL.Add(log);
+
+            Content = ParseMeasurementsFromBsonJson(FilterToNow(response.Content));
         }
         private string FilterToNow(string json)
         {
@@ -83,6 +83,44 @@ namespace api_parser
             parsed["data"] = filtered;
             return parsed.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
         }
-        public string GetContent() => Content;
+        public List<Measurement> GetContent() => Content;
+        public List<Measurement> ParseMeasurementsFromBsonJson(string json)
+        {
+            var bsonDocument = BsonDocument.Parse(json);
+            if (!bsonDocument.Contains("data")) return new List<Measurement>();
+
+            var dataArray = bsonDocument["data"].AsBsonArray;
+            List<Measurement> list = new List<Measurement>();
+
+            foreach (var item in dataArray)
+            {
+                var doc = item.AsBsonDocument;
+                Measurement measurement = new Measurement();
+
+                string timeString = doc.Contains("time") ? doc["time"].ToString() : null;
+                if (DateTime.TryParse(timeString, out DateTime parsed))
+                    measurement.Time = parsed;
+                measurement.Temperature = doc.Contains("temp") ? doc["temp"].ToDouble() : 0;
+                measurement.DewPoint = doc.Contains("dwpt") ? doc["dwpt"].ToDouble() : 0;
+                measurement.RelativeHumidity = doc.Contains("rhum") ? Convert.ToInt32(doc["rhum"].ToDouble()) : 0;
+                measurement.Precipitation = doc.Contains("prcp") ? doc["prcp"].ToDouble() : 0;
+                if (doc.Contains("snow") && !doc["snow"].IsBsonNull) measurement.Snow = doc["snow"].ToDouble();
+                else measurement.Snow = null;
+                measurement.WindDirection = doc.Contains("wdir") ? Convert.ToInt32(doc["wdir"].ToDouble()) : 0;
+                measurement.WindSpeed = doc.Contains("wspd") ? doc["wspd"].ToDouble() : 0;
+                if (doc.Contains("wpgt") && !doc["wpgt"].IsBsonNull) measurement.WindGust = doc["wpgt"].ToDouble();
+                else measurement.WindGust = null;
+                measurement.Pressure = doc.Contains("pres") ? doc["pres"].ToDouble() : 0;
+                if (doc.Contains("tsun") && !doc["tsun"].IsBsonNull) measurement.SunshineDuration = Convert.ToInt32(doc["tsun"].ToDouble());
+                else measurement.SunshineDuration = null;
+                measurement.WeatherCode = doc.Contains("coco") ? Convert.ToInt32(doc["coco"].ToDouble()) : 0;
+                measurement.Station = Station;
+
+                list.Add(measurement);
+            }
+
+            return list;
+        }
+
     }
 }

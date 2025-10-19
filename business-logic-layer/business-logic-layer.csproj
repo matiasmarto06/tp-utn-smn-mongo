@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiRequestLog.cs" />
+    <Compile Include="Measurement.cs" />
     <Compile Include="Station.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

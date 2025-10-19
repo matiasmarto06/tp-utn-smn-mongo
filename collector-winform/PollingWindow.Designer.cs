@@ -149,7 +149,7 @@
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
-            this.txtLog.Size = new System.Drawing.Size(566, 270);
+            this.txtLog.Size = new System.Drawing.Size(499, 226);
             this.txtLog.TabIndex = 1;
             // 
             // PollingWindow
