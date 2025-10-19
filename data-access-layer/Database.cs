@@ -1,22 +1,22 @@
-﻿using System;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
+using System.Configuration;
 
 namespace data_access_layer
 {
-    public partial class Database
+    public class AccesoDatosMongo
     {
-        private static IMongoDatabase _database;
-        public static void Initialize(string mongoUri, string dbName)
+        private readonly IMongoDatabase Database;
+        public AccesoDatosMongo()
         {
-            var client = new MongoClient(mongoUri);
-            _database = client.GetDatabase(dbName);
-        }
-        public static IMongoCollection<T> GetCollection<T>(string collectionName)
-        {
-            if (_database == null)
-                throw new InvalidOperationException("Database not initialized. Call Database.Initialize() first.");
+            string MongoUrl = ConfigurationManager.AppSettings["MongoUrl"];
+            string DbName = ConfigurationManager.AppSettings["MongoDatabase"];
 
-            return _database.GetCollection<T>(collectionName);
+            var client = new MongoClient(MongoUrl);
+            Database = client.GetDatabase(DbName);
+        }
+        public IMongoCollection<T> GetCollection<T>(string collectionName)
+        {
+            return Database.GetCollection<T>(collectionName);
         }
     }
 }

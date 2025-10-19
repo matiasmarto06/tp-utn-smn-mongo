@@ -66,6 +66,7 @@
             this.btnPolling.TabIndex = 1;
             this.btnPolling.Text = "Polling";
             this.btnPolling.UseVisualStyleBackColor = true;
+            this.btnPolling.Click += new System.EventHandler(this.btnPolling_Click);
             // 
             // btnData
             // 
@@ -94,7 +95,8 @@
             this.MaximumSize = new System.Drawing.Size(275, 100);
             this.MinimumSize = new System.Drawing.Size(275, 100);
             this.Name = "MainWindow";
-            this.Text = "Meteostat Collector";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Collector";
             this.flowLayoutPanel1.ResumeLayout(false);
             this.ResumeLayout(false);
 

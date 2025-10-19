@@ -53,6 +53,7 @@
             this.dgvData.Name = "dgvData";
             this.dgvData.Size = new System.Drawing.Size(684, 203);
             this.dgvData.TabIndex = 6;
+            this.dgvData.SelectionChanged += new System.EventHandler(this.dgvData_SelectionChanged);
             // 
             // flowLayoutPanel_Top
             // 
@@ -136,6 +137,7 @@
             this.btnDelete.TabIndex = 5;
             this.btnDelete.Text = "Eliminar";
             this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // btnEdit
             // 
@@ -145,6 +147,7 @@
             this.btnEdit.TabIndex = 4;
             this.btnEdit.Text = "Editar";
             this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // btnAdd
             // 
@@ -154,6 +157,7 @@
             this.btnAdd.TabIndex = 3;
             this.btnAdd.Text = "Agregar";
             this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // btnDetails
             // 
@@ -163,6 +167,7 @@
             this.btnDetails.TabIndex = 6;
             this.btnDetails.Text = "Detalles";
             this.btnDetails.UseVisualStyleBackColor = true;
+            this.btnDetails.Click += new System.EventHandler(this.btnDetails_Click);
             // 
             // StationsWindow
             // 
@@ -174,7 +179,9 @@
             this.Controls.Add(this.flowLayoutPanel_bottom);
             this.MinimumSize = new System.Drawing.Size(700, 300);
             this.Name = "StationsWindow";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Stations";
+            this.Load += new System.EventHandler(this.StationsWindow_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvData)).EndInit();
             this.flowLayoutPanel_Top.ResumeLayout(false);
             this.flowLayoutPanel_Top.PerformLayout();

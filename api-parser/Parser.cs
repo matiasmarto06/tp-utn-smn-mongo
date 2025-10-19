@@ -1,7 +1,10 @@
 ﻿using RestSharp;
 using System;
-using System.Text.Json.Nodes;
+using System.Configuration;
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using data_access_layer;
+using business_logic_layer;
 
 namespace api_parser
 {
@@ -13,16 +16,14 @@ namespace api_parser
         private string ApiKey { get; set; }
         private string ApiUrl { get; set; }
         private string Station { get; set; }
-
-        public Parser(string apiKey, string apiUrl, string station)
+        public Parser(string station)
         {
-            ApiKey = apiKey;
-            ApiUrl = apiUrl;
+            ApiKey = ConfigurationManager.AppSettings["MeteostatApiKey"];
+            ApiUrl = ConfigurationManager.AppSettings["MeteostatHost"];
             Station = station;
 
             UpdateContent();
         }
-
         private void UpdateContent()
         {
             string start = DateTime.Now.ToString("yyyy-MM-dd");
@@ -38,8 +39,19 @@ namespace api_parser
             Content = response.Content;
 
             Content = FilterToNow(Content);
-        }
 
+            // Registrar consulta
+            var logDAL = new ApiRequestLogDAL();
+            var log = new ApiRequestLog
+            {
+                StationName = Station,
+                Timestamp = DateTime.Now,
+                IsScheduled = false, // O true si es programada
+                Success = response.IsSuccessful,
+                Message = response.IsSuccessful ? "OK" : response.ErrorMessage
+            };
+            _ = logDAL.Add(log);
+        }
         private string FilterToNow(string json)
         {
             if (string.IsNullOrEmpty(json))
@@ -71,7 +83,6 @@ namespace api_parser
             parsed["data"] = filtered;
             return parsed.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
         }
-
         public string GetContent() => Content;
     }
 }

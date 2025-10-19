@@ -212,5 +212,15 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\business-logic-layer\business-logic-layer.csproj">
+      <Project>{4933cd2a-5508-41e2-b6ad-74860cf328d9}</Project>
+      <Name>business-logic-layer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\data-access-layer\data-access-layer.csproj">
+      <Project>{145f80b0-ba5c-4aa2-9661-13045e2fb4f2}</Project>
+      <Name>data-access-layer</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
