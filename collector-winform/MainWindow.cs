@@ -7,6 +7,7 @@ namespace collector_winform
 {
     public partial class MainWindow : Form
     {
+        private PollingWindow polling = new PollingWindow();
         public MainWindow()
         {
             InitializeComponent();
@@ -19,8 +20,11 @@ namespace collector_winform
 
         private void btnPolling_Click(object sender, EventArgs e)
         {
-            PollingWindow polling = new PollingWindow();
-            polling.ShowDialog();
+            if (!polling.Visible)
+                polling.Show();
+
+            if (polling.WindowState == FormWindowState.Minimized)
+                polling.WindowState = FormWindowState.Normal;
         }
     }
 }

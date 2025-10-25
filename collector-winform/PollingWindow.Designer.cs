@@ -32,8 +32,6 @@
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.lblPolling = new System.Windows.Forms.Label();
             this.btnPolling = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -47,7 +45,7 @@
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(677, 298);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(656, 271);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // flowLayoutPanel2
@@ -56,11 +54,9 @@
             this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel2.Controls.Add(this.lblPolling);
             this.flowLayoutPanel2.Controls.Add(this.btnPolling);
-            this.flowLayoutPanel2.Controls.Add(this.label5);
-            this.flowLayoutPanel2.Controls.Add(this.button1);
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(258, 29);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(129, 29);
             this.flowLayoutPanel2.TabIndex = 6;
             // 
             // lblPolling
@@ -87,46 +83,29 @@
             this.btnPolling.UseVisualStyleBackColor = false;
             this.btnPolling.Click += new System.EventHandler(this.btnPolling_Click);
             // 
-            // label5
-            // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(132, 0);
-            this.label5.MinimumSize = new System.Drawing.Size(42, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(42, 29);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "label5";
-            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(180, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // txtLog
             // 
             this.txtLog.AllowDrop = true;
             this.txtLog.Location = new System.Drawing.Point(3, 38);
+            this.txtLog.MaximumSize = new System.Drawing.Size(650, 230);
+            this.txtLog.MinimumSize = new System.Drawing.Size(650, 230);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
-            this.txtLog.Size = new System.Drawing.Size(499, 226);
+            this.txtLog.Size = new System.Drawing.Size(650, 230);
             this.txtLog.TabIndex = 1;
             // 
             // PollingWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(677, 298);
+            this.ClientSize = new System.Drawing.Size(656, 271);
             this.Controls.Add(this.flowLayoutPanel1);
+            this.MaximumSize = new System.Drawing.Size(672, 310);
+            this.MinimumSize = new System.Drawing.Size(672, 310);
             this.Name = "PollingWindow";
             this.Text = "Polling";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
             this.Load += new System.EventHandler(this.PollingWindow_Load);
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
@@ -140,10 +119,8 @@
 
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.Label lblPolling;
         private System.Windows.Forms.Button btnPolling;
-        private System.Windows.Forms.Label label5;
     }
 }

@@ -139,7 +139,6 @@ namespace collector_winform
         {
             await StationCounts_Load();
             SetupPollingInterval();
-            //await PerformPollingCycle(false);
         }
         private async void btnPolling_Click(object sender, EventArgs e)
         {
@@ -155,6 +154,12 @@ namespace collector_winform
                 btnPolling.Text = "Disabled";
                 btnPolling.BackColor = System.Drawing.Color.LightCoral;
             }
+        }
+
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.Hide();
+            e.Cancel = true;
         }
     }
 }
