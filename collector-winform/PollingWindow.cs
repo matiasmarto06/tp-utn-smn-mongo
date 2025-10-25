@@ -19,6 +19,8 @@ namespace collector_winform
         public PollingWindow()
         {
             InitializeComponent();
+            btnPolling.Text = "Disabled";
+            btnPolling.BackColor = System.Drawing.Color.LightCoral;
         }
         private async Task StationCounts_Load()
         {
@@ -69,7 +71,7 @@ namespace collector_winform
                     txtLog.AppendText($"{DateTime.Now}: Polling station: {station.Name}{Environment.NewLine}");
                     Parser parser = new Parser(station);
                     List<Measurement> measurements = parser.GetContent();
-                    int inserted = await measurementDAL.AddMany(measurements);
+                    totalInserted += await measurementDAL.AddMany(measurements);
                     txtLog.AppendText($"{DateTime.Now}: Waiting 2 second before next station...{Environment.NewLine}");
                     await Task.Delay(2000);
                 }
@@ -124,7 +126,7 @@ namespace collector_winform
                 txtLog.AppendText($"{DateTime.Now}: No stations loaded yet.\n" + Environment.NewLine);
                 return;
             }
-            int PollingIntervalHours = CalculatePollingIntervalHours(StationsCount);
+            PollingIntervalHours = CalculatePollingIntervalHours(StationsCount);
             int intervalMs = PollingIntervalHours * 60 * 60 * 1000;
 
             PollingTimer = new Timer();
@@ -137,7 +139,22 @@ namespace collector_winform
         {
             await StationCounts_Load();
             SetupPollingInterval();
-            await PerformPollingCycle(false);
+            //await PerformPollingCycle(false);
+        }
+        private async void btnPolling_Click(object sender, EventArgs e)
+        {
+            TogglePolling();
+            if (IsPollingActive)
+            {
+                btnPolling.Text = "Enabled";
+                btnPolling.BackColor = System.Drawing.Color.LightGreen;
+                await PerformPollingCycle();
+            }
+            else
+            {
+                btnPolling.Text = "Disabled";
+                btnPolling.BackColor = System.Drawing.Color.LightCoral;
+            }
         }
     }
 }
