@@ -20,9 +20,6 @@ namespace collector_winform
 
         private async void DataWindow_Load(object sender, EventArgs e)
         {
-            btnClear.Enabled = false;
-            btnDetails.Enabled = false;
-
             await PopulateFilterControls();
             await ApplyFilters();
         }
