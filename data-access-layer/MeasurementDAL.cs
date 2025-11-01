@@ -28,6 +28,53 @@ namespace data_access_layer
 
             Measurements.Indexes.CreateOne(model);
         }
+        public async Task<List<Measurement>> GetMeasurementsByFilterAsync(
+            string stationId,
+            DateTime? dateFrom,
+            DateTime? dateTo,
+            string variableName = null,
+            string criteria = null,
+            double? value = null)
+        {
+            var builder = Builders<Measurement>.Filter;
+            var filter = builder.Empty;
+
+            if (!string.IsNullOrEmpty(stationId))
+            {
+                filter &= builder.Eq(m => m.Station.Id, stationId);
+            }
+
+            if (dateFrom.HasValue)
+            {
+                filter &= builder.Gte(m => m.Time, dateFrom.Value.Date);
+            }
+
+            if (dateTo.HasValue)
+            {
+                filter &= builder.Lte(m => m.Time, dateTo.Value.Date.AddDays(1).AddTicks(-1));
+            }
+
+            if (!string.IsNullOrEmpty(variableName) && !string.IsNullOrEmpty(criteria) && value.HasValue)
+            {
+                var field = new StringFieldDefinition<Measurement, double>(variableName);
+                switch (criteria)
+                {
+                    case ">=": filter &= builder.Gte(field, value.Value); break;
+                    case "<=": filter &= builder.Lte(field, value.Value); break;
+                    case "==": filter &= builder.Eq(field, value.Value); break;
+                }
+            }
+
+            try
+            {
+                return await Measurements.Find(filter).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error retrieving filtered measurements: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new List<Measurement>();
+            }
+        }
         public async Task<List<Measurement>> GetAllMeasurementsAsync()
         {
             try
@@ -46,12 +93,11 @@ namespace data_access_layer
             try
             {
                 await Measurements.InsertManyAsync(measurements, new InsertManyOptions { IsOrdered = false });
-                insertedCount = measurements.Count; // todos se insertaron correctamente
+                insertedCount = measurements.Count;
                 return insertedCount;
             }
             catch (MongoBulkWriteException ex)
             {
-                // Ignoramos duplicados
                 if (ex.WriteErrors.All(e => e.Category == ServerErrorCategory.DuplicateKey))
                     return 0;
                 throw;

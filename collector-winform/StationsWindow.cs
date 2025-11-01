@@ -18,6 +18,10 @@ namespace collector_winform
 
         private async void StationsWindow_Load(object sender, EventArgs e)
         {
+            cboxField.Enabled = false;
+            cboxCriteria.Enabled = false;
+            txtValue.Enabled = false;
+            btnSearch.Enabled = false;
             await LoadStationsAsync();
         }
 
@@ -49,25 +53,34 @@ namespace collector_winform
 
         private async void btnDelete_Click(object sender, EventArgs e)
         {
-            _ = _stationDAL.Delete(id: (string)dgvData.SelectedRows[0].Cells["Id"].Value);
-            await LoadStationsAsync();
+            if (dgvData.SelectedRows.Count > 0)
+            {
+                _ = _stationDAL.Delete(id: (string)dgvData.SelectedRows[0].Cells["Id"].Value);
+                await LoadStationsAsync();
+            }
         }
 
         private async void btnEdit_Click(object sender, EventArgs e)
         {
-            using (var config = new StationConfigure(setting:"edit", id: (string)dgvData.SelectedRows[0].Cells["Id"].Value))
+            if (dgvData.SelectedRows.Count > 0)
             {
-                config.ShowDialog();
-                await LoadStationsAsync(); // recarga después de cerrar
+                using (var config = new StationConfigure(setting: "edit", id: (string)dgvData.SelectedRows[0].Cells["Id"].Value))
+                {
+                    config.ShowDialog();
+                    await LoadStationsAsync(); // recarga después de cerrar
+                }
             }
         }
 
         private async void btnDetails_Click(object sender, EventArgs e)
         {
-            using (var config = new StationConfigure(setting: "details", id: (string)dgvData.SelectedRows[0].Cells["Id"].Value))
+            if (dgvData.SelectedRows.Count > 0)
             {
-                config.ShowDialog();
-                await LoadStationsAsync(); // recarga después de cerrar
+                using (var config = new StationConfigure(setting: "details", id: (string)dgvData.SelectedRows[0].Cells["Id"].Value))
+                {
+                    config.ShowDialog();
+                    await LoadStationsAsync(); // recarga después de cerrar
+                }
             }
         }
 

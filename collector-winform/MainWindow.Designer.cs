@@ -76,6 +76,7 @@
             this.btnData.TabIndex = 2;
             this.btnData.Text = "Datos";
             this.btnData.UseVisualStyleBackColor = true;
+            this.btnData.Click += new System.EventHandler(this.btnData_Click);
             // 
             // btnGraphs
             // 

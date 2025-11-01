@@ -77,9 +77,9 @@ namespace collector_winform
                 }
                 txtLog.AppendText($"{DateTime.Now}: Polling cycle complete.{Environment.NewLine}");
                 if (IsPollingActive)
-                    txtLog.AppendText($"{DateTime.Now}: Time off next polling: {DateTime.Now.AddHours(PollingIntervalHours)} {Environment.NewLine}");
+                    txtLog.AppendText($"{DateTime.Now}: Time of next polling: {DateTime.Now.AddHours(PollingIntervalHours)} {Environment.NewLine}");
                 else 
-                    txtLog.AppendText($"{DateTime.Now}: Time off next polling: never {Environment.NewLine}");
+                    txtLog.AppendText($"{DateTime.Now}: Time of next polling: never {Environment.NewLine}");
                 txtLog.AppendText($"{DateTime.Now}: Measurements added: {totalInserted}{Environment.NewLine}");
                 PrintInformation();
             }
