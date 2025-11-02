@@ -32,5 +32,11 @@ namespace collector_winform
             DataWindow dataWindow = new DataWindow();
             dataWindow.ShowDialog();
         }
+
+        private void btnGraphs_Click(object sender, EventArgs e)
+        {
+            GraphWindow graphWindow = new GraphWindow();
+            graphWindow.ShowDialog();
+        }
     }
 }

@@ -86,6 +86,7 @@
             this.btnGraphs.TabIndex = 3;
             this.btnGraphs.Text = "Graficos";
             this.btnGraphs.UseVisualStyleBackColor = true;
+            this.btnGraphs.Click += new System.EventHandler(this.btnGraphs_Click);
             // 
             // MainWindow
             // 
