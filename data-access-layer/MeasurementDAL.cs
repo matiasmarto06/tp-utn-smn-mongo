@@ -1,4 +1,6 @@
 ﻿using business_logic_layer;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -20,60 +22,13 @@ namespace data_access_layer
         private void EnsureIndexes()
         {
             var indexKeys = Builders<Measurement>.IndexKeys
-                .Ascending(m => m.Station)
+                .Ascending(m => m.StationId)
                 .Ascending(m => m.Time);
 
             var options = new CreateIndexOptions { Unique = true };
             var model = new CreateIndexModel<Measurement>(indexKeys, options);
 
-            Measurements.Indexes.CreateOne(model);
-        }
-        public async Task<List<Measurement>> GetMeasurementsByFilterAsync(
-            string stationId,
-            DateTime? dateFrom,
-            DateTime? dateTo,
-            string variableName = null,
-            string criteria = null,
-            double? value = null)
-        {
-            var builder = Builders<Measurement>.Filter;
-            var filter = builder.Empty;
-
-            if (!string.IsNullOrEmpty(stationId))
-            {
-                filter &= builder.Eq(m => m.Station.Id, stationId);
-            }
-
-            if (dateFrom.HasValue)
-            {
-                filter &= builder.Gte(m => m.Time, dateFrom.Value.Date);
-            }
-
-            if (dateTo.HasValue)
-            {
-                filter &= builder.Lte(m => m.Time, dateTo.Value.Date.AddDays(1).AddTicks(-1));
-            }
-
-            if (!string.IsNullOrEmpty(variableName) && !string.IsNullOrEmpty(criteria) && value.HasValue)
-            {
-                var field = new StringFieldDefinition<Measurement, double>(variableName);
-                switch (criteria)
-                {
-                    case ">=": filter &= builder.Gte(field, value.Value); break;
-                    case "<=": filter &= builder.Lte(field, value.Value); break;
-                    case "==": filter &= builder.Eq(field, value.Value); break;
-                }
-            }
-
-            try
-            {
-                return await Measurements.Find(filter).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error retrieving filtered measurements: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return new List<Measurement>();
-            }
+            try { Measurements.Indexes.CreateOne(model); } catch { }
         }
         public async Task<List<Measurement>> GetAllMeasurementsAsync()
         {
@@ -118,6 +73,129 @@ namespace data_access_layer
             catch (Exception ex)
             {
                 MessageBox.Show($"Error adding measurement: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        public async Task<List<Measurement>> GetMeasurementsWithLookupAsync(
+            string stationId,
+            DateTime? dateFrom,
+            DateTime? dateTo,
+            string variableName = null,
+            string criteria = null,
+            double? value = null,
+            SortDefinition<Measurement> sortDefinition = null)
+        {
+            var builder = Builders<Measurement>.Filter;
+            var filter = builder.Empty;
+
+            if (!string.IsNullOrEmpty(stationId))
+                filter &= builder.Eq(m => m.StationId, ObjectId.Parse(stationId));
+            if (dateFrom.HasValue)
+                filter &= builder.Gte(m => m.Time, dateFrom.Value);
+            if (dateTo.HasValue)
+                filter &= builder.Lte(m => m.Time, dateTo.Value);
+
+            if (!string.IsNullOrEmpty(variableName) && !string.IsNullOrEmpty(criteria) && value.HasValue)
+            {
+                var field = new StringFieldDefinition<Measurement, double>(variableName);
+                switch (criteria)
+                {
+                    case ">=": filter &= builder.Gte(field, value.Value); break;
+                    case "<=": filter &= builder.Lte(field, value.Value); break;
+                    case "==": filter &= builder.Eq(field, value.Value); break;
+                }
+            }
+
+            if (sortDefinition == null)
+                sortDefinition = Builders<Measurement>.Sort.Descending(m => m.Time);
+
+            try
+            {
+                var pipeline = Measurements.Aggregate()
+                    .Match(filter)
+                    .Sort(sortDefinition)
+                    .Lookup(
+                        foreignCollectionName: "stations",
+                        localField: "station_id",
+                        foreignField: "_id",
+                        @as: "station_joined"
+                    )
+                    .Unwind("station_joined")
+                    .As<BsonDocument>();
+
+                var bsonResults = await pipeline.ToListAsync();
+
+                var finalResults = new List<Measurement>();
+                foreach (var doc in bsonResults)
+                {
+                    Station station = null;
+                    if (doc.Contains("station_joined"))
+                    {
+                        var stationDoc = doc["station_joined"].AsBsonDocument;
+                        station = BsonSerializer.Deserialize<Station>(stationDoc);
+                        doc.Remove("station_joined");
+                    }
+                    var measurement = BsonSerializer.Deserialize<Measurement>(doc);
+
+                    if (station != null)
+                    {
+                        measurement.StationId = ObjectId.Parse(station.Id);
+                    }
+                    finalResults.Add(measurement);
+                }
+
+                return finalResults;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error in aggregation: {ex.Message}", "DB Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new List<Measurement>();
+            }
+        }
+        public async Task<List<Measurement>> GetMeasurementsByFilterAsync(
+            string stationId,
+            DateTime? dateFrom,
+            DateTime? dateTo,
+            string variableName = null,
+            string criteria = null,
+            double? value = null)
+        {
+            var builder = Builders<Measurement>.Filter;
+            var filter = builder.Empty;
+
+            if (!string.IsNullOrEmpty(stationId))
+            {
+                filter &= builder.Eq(m => m.StationId, ObjectId.Parse(stationId));
+            }
+
+            if (dateFrom.HasValue)
+            {
+                filter &= builder.Gte(m => m.Time, dateFrom.Value);
+            }
+
+            if (dateTo.HasValue)
+            {
+                filter &= builder.Lte(m => m.Time, dateTo.Value);
+            }
+
+            if (!string.IsNullOrEmpty(variableName) && !string.IsNullOrEmpty(criteria) && value.HasValue)
+            {
+                var field = new StringFieldDefinition<Measurement, double>(variableName);
+                switch (criteria)
+                {
+                    case ">=": filter &= builder.Gte(field, value.Value); break;
+                    case "<=": filter &= builder.Lte(field, value.Value); break;
+                    case "==": filter &= builder.Eq(field, value.Value); break;
+                }
+            }
+
+            try
+            {
+                return await Measurements.Find(filter).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error retrieving filtered measurements: {ex.Message}", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new List<Measurement>();
             }
         }
     }

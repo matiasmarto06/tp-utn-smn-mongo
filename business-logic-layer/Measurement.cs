@@ -9,8 +9,10 @@ namespace business_logic_layer
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
-        [BsonElement("station")]
-        public Station Station { get; set; }
+
+        [BsonElement("station_id")]
+        public ObjectId StationId { get; set; } = ObjectId.Empty;
+
         [BsonElement("time")]
         public DateTime Time { get; set; }
 

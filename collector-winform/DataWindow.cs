@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using data_access_layer;
 using business_logic_layer;
+using MongoDB.Driver;
 
 namespace collector_winform
 {
@@ -12,6 +13,24 @@ namespace collector_winform
     {
         private readonly MeasurementDAL _measurementDAL = new MeasurementDAL();
         private readonly StationDAL _stationDAL = new StationDAL();
+        private string _currentSortColumn = "Time";
+        private bool _isAscending = false;
+        
+        private readonly Dictionary<string, string> _columnToMongoFieldMap = new Dictionary<string, string>
+        {
+            { "Time", "time" },
+            { "Temp", "temp" },
+            { "DewPoint", "dwpt" },
+            { "Humidity", "rhum" },
+            { "Precipitation", "prcp" },
+            { "Snow", "snow" },
+            { "WindSpeed", "wspd" },
+            { "WindDir", "wdir" },
+            { "WindGust", "gust" },
+            { "Pressure", "pres" },
+            { "Sunshine", "tsun" },
+            { "WeatherCode", "coco" }
+        };
 
         public DataWindow()
         {
@@ -28,39 +47,32 @@ namespace collector_winform
         {
             try
             {
+                this.Cursor = Cursors.WaitCursor;
                 var stations = await _stationDAL.ToList();
-
-                stations.Insert(0, new Station { Id = null, Name = "Todas" });
+                stations.Insert(0, new Station { Id = null, Name = "Todas las Estaciones" });
 
                 cboxStation.DataSource = stations;
                 cboxStation.DisplayMember = "Name";
                 cboxStation.ValueMember = "Id";
                 cboxStation.SelectedIndex = 0;
+
+                cboxVariable.DataSource = new BindingSource(_columnToMongoFieldMap, null);
+                cboxVariable.DisplayMember = "Key";
+                cboxVariable.ValueMember = "Value";
+                cboxCriteria.Items.AddRange(new string[] { ">=", "<=", "==" });
+                cboxCriteria.SelectedIndex = 0;
+
+                dtpDateFrom.Value = DateTime.Now.AddDays(-7); // Default to last week
+                dtpDateTo.Value = DateTime.Now;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading stations for filter: " + ex.Message);
+                MessageBox.Show("Error loading filters: " + ex.Message);
             }
-
-            var variableMap = new Dictionary<string, string>
+            finally
             {
-                { "Temperature", "temp" },
-                { "Humidity", "rhum" },
-                { "Pressure", "pres" },
-                { "WindSpeed", "wspd" },
-                { "DewPoint", "dwpt" },
-                { "Precipitation", "prcp" }
-            };
-
-            cboxVariable.DataSource = new BindingSource(variableMap, null);
-            cboxVariable.DisplayMember = "Key";
-            cboxVariable.ValueMember = "Value";
-
-            cboxCriteria.Items.AddRange(new string[] { ">=", "<=", "==" });
-            cboxCriteria.SelectedIndex = 0;
-
-            dtpDateFrom.Value = DateTime.Now.AddMonths(-1);
-            dtpDateTo.Value = DateTime.Now;
+                this.Cursor = Cursors.Default;
+            }
         }
         private async Task ApplyFilters()
         {
@@ -74,22 +86,31 @@ namespace collector_winform
 
             if (cboxVariable.SelectedValue != null && !string.IsNullOrWhiteSpace(txtValue.Text) && double.TryParse(txtValue.Text, out double filterValue))
             {
-                variableName = cboxVariable.SelectedValue.ToString(); // This gets "temp", "rhum", etc.
+                variableName = cboxVariable.SelectedValue.ToString();
                 criteria = cboxCriteria.SelectedItem.ToString();
                 value = filterValue;
             }
+
+            string mongoField = _columnToMongoFieldMap.ContainsKey(_currentSortColumn)
+                ? _columnToMongoFieldMap[_currentSortColumn]
+                : "time";
+
+            var sortDef = _isAscending
+                ? Builders<Measurement>.Sort.Ascending(mongoField)
+                : Builders<Measurement>.Sort.Descending(mongoField);
 
             List<Measurement> filteredMeasurements;
             try
             {
                 this.Cursor = Cursors.WaitCursor;
-                filteredMeasurements = await _measurementDAL.GetMeasurementsByFilterAsync(
+                filteredMeasurements = await _measurementDAL.GetMeasurementsWithLookupAsync(
                     stationId,
                     dateFrom,
                     dateTo,
                     variableName,
                     criteria,
-                    value);
+                    value, 
+                    sortDef);
             }
             finally
             {
@@ -99,7 +120,7 @@ namespace collector_winform
             var displayData = filteredMeasurements.Select(m => new
             {
                 Id = m.Id,
-                Station = m.Station.Name,
+                Station = m.StationId,
                 Time = m.Time,
                 Temp = m.Temperature,
                 DewPoint = m.DewPoint,
@@ -149,6 +170,12 @@ namespace collector_winform
                 dgvData.Columns["Sunshine"].HeaderText = "Sunshine (min)";
             if (dgvData.Columns["WeatherCode"] != null)
                 dgvData.Columns["WeatherCode"].HeaderText = "Weather Code";
+
+            if (dgvData.Columns.Contains(_currentSortColumn))
+            {
+                dgvData.Columns[_currentSortColumn].HeaderCell.SortGlyphDirection =
+                    _isAscending ? SortOrder.Ascending : SortOrder.Descending;
+            }
         }
         private async void btnSearch_Click(object sender, EventArgs e)
         {
@@ -163,6 +190,25 @@ namespace collector_winform
             cboxVariable.SelectedIndex = 0;
 
             await ApplyFilters();
+        }
+
+        private async void dgvData_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            string clickedColumnName = dgvData.Columns[e.ColumnIndex].Name;
+
+            if (_columnToMongoFieldMap.ContainsKey(clickedColumnName))
+            {
+                if (clickedColumnName == _currentSortColumn)
+                {
+                    _isAscending = !_isAscending;
+                }
+                else
+                {
+                    _currentSortColumn = clickedColumnName;
+                    _isAscending = true;
+                }
+                await ApplyFilters();
+            }
         }
     }
 }

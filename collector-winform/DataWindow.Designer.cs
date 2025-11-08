@@ -52,6 +52,7 @@
             this.dgvData.Name = "dgvData";
             this.dgvData.Size = new System.Drawing.Size(1534, 532);
             this.dgvData.TabIndex = 9;
+            this.dgvData.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgvData_ColumnHeaderMouseClick);
             // 
             // flowLayoutPanel_Top
             // 

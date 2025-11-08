@@ -38,13 +38,13 @@ namespace api_parser
             Request.AddHeader("x-rapidapi-key", ApiKey);
             Request.AddHeader("x-rapidapi-host", "meteostat.p.rapidapi.com");
             RestResponse response = Client.Execute(Request);
-            // Registrar consulta
+
             var logDAL = new ApiRequestLogDAL();
             var log = new ApiRequestLog
             {
                 Station = Station,
                 Timestamp = DateTime.Now,
-                IsScheduled = false, // O true si es programada
+                IsScheduled = false,
                 Success = response.IsSuccessful,
                 Message = response.IsSuccessful ? "OK" : response.ErrorMessage
             };
@@ -114,13 +114,12 @@ namespace api_parser
                 if (doc.Contains("tsun") && !doc["tsun"].IsBsonNull) measurement.SunshineDuration = Convert.ToInt32(doc["tsun"].ToDouble());
                 else measurement.SunshineDuration = null;
                 measurement.WeatherCode = doc.Contains("coco") ? Convert.ToInt32(doc["coco"].ToDouble()) : 0;
-                measurement.Station = Station;
+                measurement.StationId = ObjectId.Parse(Station.Id);
 
                 list.Add(measurement);
             }
 
             return list;
         }
-
     }
 }
