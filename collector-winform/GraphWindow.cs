@@ -77,8 +77,8 @@ namespace collector_winform
                 cboxVariable.SelectedValue = variableItem.Value;
             }
 
-            dtpDateFrom.Value = DateTime.Now.Date.AddDays(-1);
-            dtpDateTo.Value = DateTime.Now.Date;
+            dtpDateFrom.Value = DateTime.Now.Date;
+            dtpDateTo.Value = DateTime.Now.Date.AddDays(1);
 
             await PlotFromControls();
         }

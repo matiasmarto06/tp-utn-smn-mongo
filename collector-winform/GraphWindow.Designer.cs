@@ -36,11 +36,11 @@
             this.cboxVariable = new System.Windows.Forms.ComboBox();
             this.btnPlot = new System.Windows.Forms.Button();
             this.flowLayoutPanel_Top = new System.Windows.Forms.FlowLayoutPanel();
-            this.chartMain = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.dtpDateTo = new System.Windows.Forms.DateTimePicker();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblTo = new System.Windows.Forms.Label();
             this.dtpDateFrom = new System.Windows.Forms.DateTimePicker();
             this.lblFrom = new System.Windows.Forms.Label();
+            this.chartMain = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.flowLayoutPanel_Top.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartMain)).BeginInit();
             this.SuspendLayout();
@@ -90,15 +90,51 @@
             this.flowLayoutPanel_Top.Controls.Add(this.cboxVariable);
             this.flowLayoutPanel_Top.Controls.Add(this.cboxStation);
             this.flowLayoutPanel_Top.Controls.Add(this.dtpDateTo);
-            this.flowLayoutPanel_Top.Controls.Add(this.lblFrom);
+            this.flowLayoutPanel_Top.Controls.Add(this.lblTo);
             this.flowLayoutPanel_Top.Controls.Add(this.dtpDateFrom);
-            this.flowLayoutPanel_Top.Controls.Add(this.label1);
+            this.flowLayoutPanel_Top.Controls.Add(this.lblFrom);
             this.flowLayoutPanel_Top.Dock = System.Windows.Forms.DockStyle.Top;
             this.flowLayoutPanel_Top.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
             this.flowLayoutPanel_Top.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel_Top.Name = "flowLayoutPanel_Top";
             this.flowLayoutPanel_Top.Size = new System.Drawing.Size(1034, 29);
             this.flowLayoutPanel_Top.TabIndex = 10;
+            // 
+            // dtpDateTo
+            // 
+            this.dtpDateTo.Location = new System.Drawing.Point(496, 3);
+            this.dtpDateTo.Name = "dtpDateTo";
+            this.dtpDateTo.Size = new System.Drawing.Size(200, 20);
+            this.dtpDateTo.TabIndex = 14;
+            // 
+            // lblTo
+            // 
+            this.lblTo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.lblTo.AutoSize = true;
+            this.lblTo.Location = new System.Drawing.Point(467, 0);
+            this.lblTo.Name = "lblTo";
+            this.lblTo.Size = new System.Drawing.Size(23, 29);
+            this.lblTo.TabIndex = 13;
+            this.lblTo.Text = "To:";
+            this.lblTo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // dtpDateFrom
+            // 
+            this.dtpDateFrom.Location = new System.Drawing.Point(261, 3);
+            this.dtpDateFrom.Name = "dtpDateFrom";
+            this.dtpDateFrom.Size = new System.Drawing.Size(200, 20);
+            this.dtpDateFrom.TabIndex = 15;
+            // 
+            // lblFrom
+            // 
+            this.lblFrom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.lblFrom.AutoSize = true;
+            this.lblFrom.Location = new System.Drawing.Point(222, 0);
+            this.lblFrom.Name = "lblFrom";
+            this.lblFrom.Size = new System.Drawing.Size(33, 29);
+            this.lblFrom.TabIndex = 16;
+            this.lblFrom.Text = "From:";
+            this.lblFrom.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // chartMain
             // 
@@ -116,42 +152,6 @@
             this.chartMain.Size = new System.Drawing.Size(1034, 432);
             this.chartMain.TabIndex = 12;
             this.chartMain.Text = "chart1";
-            // 
-            // dtpDateTo
-            // 
-            this.dtpDateTo.Location = new System.Drawing.Point(496, 3);
-            this.dtpDateTo.Name = "dtpDateTo";
-            this.dtpDateTo.Size = new System.Drawing.Size(200, 20);
-            this.dtpDateTo.TabIndex = 14;
-            // 
-            // label1
-            // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(222, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(23, 29);
-            this.label1.TabIndex = 16;
-            this.label1.Text = "To:";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // dtpDateFrom
-            // 
-            this.dtpDateFrom.Location = new System.Drawing.Point(251, 3);
-            this.dtpDateFrom.Name = "dtpDateFrom";
-            this.dtpDateFrom.Size = new System.Drawing.Size(200, 20);
-            this.dtpDateFrom.TabIndex = 15;
-            // 
-            // lblFrom
-            // 
-            this.lblFrom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
-            this.lblFrom.AutoSize = true;
-            this.lblFrom.Location = new System.Drawing.Point(457, 0);
-            this.lblFrom.Name = "lblFrom";
-            this.lblFrom.Size = new System.Drawing.Size(33, 29);
-            this.lblFrom.TabIndex = 13;
-            this.lblFrom.Text = "From:";
-            this.lblFrom.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // GraphWindow
             // 
@@ -183,8 +183,8 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel_Top;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartMain;
         private System.Windows.Forms.DateTimePicker dtpDateTo;
-        private System.Windows.Forms.Label lblFrom;
+        private System.Windows.Forms.Label lblTo;
         private System.Windows.Forms.DateTimePicker dtpDateFrom;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblFrom;
     }
 }
