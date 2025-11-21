@@ -1,0 +1,602 @@
+\documentclass[11pt, a4paper]{article}
+
+% --- PAQUETES REQUERIDOS ---
+\usepackage[utf8]{inputenc}
+\usepackage[spanish, es-tabla]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{parskip}
+\usepackage{graphicx}
+
+% --- CONFIGURACIÓN DE COLORES ---
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\definecolor{delim}{RGB}{20,105,176}
+\definecolor{numb}{RGB}{106, 109, 32}
+
+% --- DEFINICIÓN DE LENGUAJES ---
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily\footnotesize,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{backcolour},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{delim}{:}}}}{1}
+      {,}{{{\color{delim}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
+
+\lstdefinelanguage{javascript}{
+    keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break, db, find, findOne, insertMany, insertOne, deleteOne, replaceOne, updateOne, countDocuments, set},
+    keywordstyle=\color{blue}\bfseries,
+    ndkeywords={class, export, boolean, throw, implements, import, this, ObjectId},
+    ndkeywordstyle=\color{darkgray}\bfseries,
+    identifierstyle=\color{black},
+    sensitive=false,
+    comment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{codegreen}\ttfamily,
+    stringstyle=\color{codepurple}\ttfamily,
+    morestring=[b]',
+    morestring=[b]"
+}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+
+    \vspace*{1cm}
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=8cm]{logo.png} 
+    \end{figure}
+    \vspace*{1cm}
+    
+    \vspace{1cm}
+    {\scshape\Large Tecnicatura Universitaria en Programación \par}
+    \vspace{1.5cm}
+    
+    {\huge\bfseries Informe Técnico: Operaciones CRUD en Colección Stations \par}
+    \vspace{0.5cm}
+    {\Large Trabajo Práctico de Base de Datos NoSQL \par}
+    \vspace{2cm}
+    
+    \begin{tabular}{rl}
+        \Large \textbf{Materia:} & \Large Base de Datos II \\ [0.5cm]
+        \Large \textbf{Profesor:} & \Large Ángel Simón \\ [0.5cm]
+        % \Large \textbf{JTP:} & \Large [Nombre del JTP si aplica] \\
+    \end{tabular}
+    
+    \vfill
+    
+    {\Large \textbf{Alumno:} Matías Ignacio Martorano \par}
+    \vspace{0.5cm}
+    {\Large \textbf{Legajo:} 27526 \par}
+    \vspace{1.5cm}
+    
+    {\Large Año 2025 \par}
+
+\end{titlepage}
+
+\section{Colección: stations}
+
+Almacena la información estática de las estaciones meteorológicas.
+
+\subsection{Estructura del Documento}
+
+\begin{lstlisting}[language=json, caption=Ejemplo de documento completo en stations]
+{
+  "_id": ObjectId("672f3a4d1b5e8a4a2c98d09f"),
+  "Code": "89055",
+  "OACI": "SAWB",
+  "Name": "BASE MARAMBIO",
+  "Province": "ANTARTIDA",
+  "Latitude": -64.2333,
+  "Longitude": -56.6167,
+  "Altitude": 198
+}
+\end{lstlisting}
+
+\section{Operaciones Implementadas}
+
+\subsection{Insertar Documento Único (`InsertOneAsync`)}
+
+Utilizado para agregar una nueva estación manualmente.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+await Stations.InsertOneAsync(station);
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.stations.insertOne({
+    "Code": "88963",
+    "OACI": "SAYE",
+    "Name": "BASE ESPERANZA",
+    "Province": "ANTARTIDA",
+    "Latitude": -63.3978,
+    "Longitude": -56.9972,
+    "Altitude": 24
+})
+    \end{lstlisting}
+\end{itemize}
+\newpage
+\subsection{Insertar Múltiples Documentos (`InsertManyAsync`)}
+
+Utilizado para la carga inicial masiva de estaciones.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+await Stations.InsertManyAsync(stations);
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.stations.insertMany([
+    {
+        "Code": "89034",
+        "OACI": "SAYB",
+        "Name": "BASE BELGRANO II",
+        "Province": "ANTARTIDA",
+        "Latitude": -77.8739,
+        "Longitude": -34.6275,
+        "Altitude": 256
+    },
+    {
+        "Code": "89066",
+        "OACI": "SAYS",
+        "Name": "BASE SAN MARTIN",
+        "Province": "ANTARTIDA",
+        "Latitude": -68.1300,
+        "Longitude": -67.1000,
+        "Altitude": 7
+    }
+])
+    \end{lstlisting}
+\end{itemize}
+
+\subsection{Leer Todos los Documentos (`Find` sin filtros)}
+
+Utilizado para listar todas las estaciones disponibles.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+await Stations.Find(_ => true).ToListAsync();
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.stations.find({})
+    \end{lstlisting}
+\end{itemize}
+\subsection{Leer un Documento Específico (`Find` con filtro)}
+
+Utilizado para obtener los detalles de una estación por su ID.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+var filter = Builders<Station>.Filter.Eq(s => s.Id, id);
+await Stations.Find(filter).FirstOrDefaultAsync();
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.stations.findOne({ "_id": ObjectId("672f3a4d1b5e8a4a2c98d09f") })
+    \end{lstlisting}
+\end{itemize}
+
+\subsection{Actualizar un Documento (`ReplaceOneAsync`)}
+
+Reemplaza el documento completo con los nuevos valores editados.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+var filter = Builders<Station>.Filter.Eq(s => s.Id, station.Id);
+await Stations.ReplaceOneAsync(filter, station);
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.stations.replaceOne(
+    { "_id": ObjectId("672f3a4d1b5e8a4a2c98d09f") },
+    {
+        "Code": "89055",
+        "OACI": "SAWB",
+        "Name": "BASE MARAMBIO MODIFICADA",
+        "Province": "ANTARTIDA",
+        "Latitude": -64.2333,
+        "Longitude": -56.6167,
+        "Altitude": 200
+    }
+)
+    \end{lstlisting}
+\end{itemize}
+
+\subsection{Eliminar un Documento (`DeleteOneAsync`)}
+
+Elimina una estación específica.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+var filter = Builders<Station>.Filter.Eq(s => s.Id, id);
+await Stations.DeleteOneAsync(filter);
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.stations.deleteOne({ "_id": ObjectId("672f3a4d1b5e8a4a2c98d09f") })
+    \end{lstlisting}
+\end{itemize}
+
+\subsection{Contar Documentos (`CountDocumentsAsync`)}
+
+Muestra el total de estaciones.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+await Stations.CountDocumentsAsync(_ => true);
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.stations.countDocuments({})
+    \end{lstlisting}
+\end{itemize}
+
+\newpage
+
+\section{Colección: measurements}
+
+Esta colección almacena los datos meteorológicos horarios. Para optimizar el almacenamiento y permitir la normalización, cada documento de medición guarda una \textbf{referencia} a la estación meteorológica correspondiente, en lugar de duplicar toda la información de la estación.
+
+\subsection{Estructura del Documento}
+
+\begin{lstlisting}[language=json, caption=Ejemplo de documento en measurements]
+{
+  "_id": ObjectId("672f3e8b1b5e8a4a2c98d0a1"),
+  "station_id": ObjectId("672f3a4d1b5e8a4a2c98d09f"),
+  "time": ISODate("2025-10-27T14:00:00.000Z"),
+  "temp": -3.5,
+  "dwpt": -4.9,
+  "rhum": 90,
+  "prcp": 0.0,
+  "snow": null,
+  "wdir": 25,
+  "wspd": 14.8,
+  "wpgt": null,
+  "pres": 993.5,
+  "tsun": null,
+  "coco": 5
+}
+\end{lstlisting}
+
+\section{Operaciones Implementadas}
+
+\subsection{Inserción Masiva de Datos (`insertMany`)}
+
+El colector de datos obtiene 24 mediciones de una sola vez por cada estación. Para eficiencia, estas se insertan en una sola operación por lotes.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+await Measurements.InsertManyAsync(measurements, new InsertManyOptions { IsOrdered = false });
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.measurements.insertMany([
+   {
+     "station_id": ObjectId("672f3a4d1b5e8a4a2c98d09f"),
+     "time": ISODate("2025-11-08T10:00:00Z"),
+     "temp": -5.4,
+     "dwpt": -6.1,
+     "rhum": 92,
+     "prcp": 0.0,
+     "snow": null,
+     "wdir": 220,
+     "wspd": 20.5,
+     "wpgt": 35.0,
+     "pres": 988.5,
+     "tsun": null,
+     "coco": 7
+   },
+   {
+     "station_id": ObjectId("672f3a4d1b5e8a4a2c98d09f"),
+     "time": ISODate("2025-11-08T11:00:00Z"),
+     "temp": -5.1,
+     "dwpt": -6.0,
+     "rhum": 90,
+     "prcp": 0.0,
+     "snow": null,
+     "wdir": 215,
+     "wspd": 18.2,
+     "wpgt": 32.0,
+     "pres": 989.0,
+     "tsun": null,
+     "coco": 7
+   }
+], { ordered: false })
+    \end{lstlisting}
+\end{itemize}
+
+\subsection{Inserción de Documento Único (`insertOne`)}
+
+Aunque menos común, el sistema permite insertar una medición individual si fuera necesario.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+await Measurements.InsertOneAsync(measurement);
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.measurements.insertOne({
+    "station_id": ObjectId("672f3a4d1b5e8a4a2c98d09f"),
+    "time": new Date(),
+    "temp": -4.0,
+    "dwpt": -5.5,
+    "rhum": 85,
+    "prcp": 0.0,
+    "snow": null,
+    "wdir": 210,
+    "wspd": 15.0,
+    "wpgt": 28.0,
+    "pres": 990.1,
+    "tsun": null,
+    "coco": 3
+})
+    \end{lstlisting}
+\end{itemize}
+\newpage
+\subsection{Lectura de Todos los Documentos (`find` sin filtros)}
+
+Utilizada para propósitos de depuración o volcado completo de datos.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+await Measurements.Find(_ => true).ToListAsync();
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.measurements.find({})
+    \end{lstlisting}
+\end{itemize}
+
+\subsection{Consulta con Filtros Múltiples (`find` / `$match$`)}
+
+Utilizada por el módulo de gráficos para obtener los datos crudos antes de procesarlos. Permite filtrar por estación, rango de fechas y valores específicos de variables.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+var filter = Builders<Measurement>.Filter.Eq(m => m.StationId, ObjectId.Parse(stationId)) &
+             Builders<Measurement>.Filter.Gte(m => m.Time, dateFrom) &
+             Builders<Measurement>.Filter.Lte(m => m.Time, dateTo);
+
+if (variableName != null && criteria != null && value.HasValue) {
+    // Se agrega dinamicamente el filtro por variable
+    // Ejemplo: filter &= builder.Gte("temp", -5.0);
+}
+
+await Measurements.Find(filter).ToListAsync();
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.measurements.find({
+    "station_id": ObjectId("672f3a4d1b5e8a4a2c98d09f"),
+    "time": {
+        "$gte": ISODate("2025-11-01T00:00:00Z"),
+        "$lte": ISODate("2025-11-08T23:59:59Z")
+    },
+    "temp": { "$gt": -5.0 }
+})
+    \end{lstlisting}
+\end{itemize}
+\newpage
+\subsection{Unión con Estaciones, Filtrado y Ordenamiento (Aggregation Pipeline)}
+
+Esta es la operación más compleja y completa del sistema, utilizada por la grilla principal de datos. Combina múltiples etapas del pipeline de agregación para obtener una vista enriquecida de los datos.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+var pipeline = Measurements.Aggregate()
+    .Match(filter)          //$match (filtrado inicial)
+    .Sort(sortDefinition)   //$sort (ordenamiento dinamico)
+    .Lookup(                //$lookup (union con stations)
+        foreignCollectionName: "stations",
+        localField: "station_id",
+        foreignField: "_id",
+        as: "station_joined"
+    )
+    .Unwind("station_joined") // $unwind (aplanar array)
+    .As<BsonDocument>();      // Proyeccion final
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.measurements.aggregate([
+    {
+        // Filtrar por estacion y fecha
+        "$match": {
+            "station_id": ObjectId("672f3a4d1b5e8a4a2c98d09f"),
+            "time": {
+                "$gte": ISODate("2025-11-01T00:00:00Z"),
+                "$lte": ISODate("2025-11-08T23:59:59Z")
+             }
+        }
+    },
+    {
+        // Ordenar por fecha descendente (mas reciente primero)
+        "$sort": { "time": -1 }
+    },
+    {
+        // Unir con la coleccion 'stations' para obtener el nombre
+        "$lookup": {
+            "from": "stations",
+            "localField": "station_id",
+            "foreignField": "_id",
+            "as": "station_joined"
+        }
+    },
+    {
+        // 'Aplanar' el array resultante de la union para facilitar su uso
+        "$unwind": "$station_joined"
+    }
+])
+    \end{lstlisting}
+\end{itemize}
+
+\newpage
+
+\section{Colección: api\_requests}
+
+Almacena un registro detallado de cada llamada realizada a la API externa de Meteostat. Esta colección es fundamental para la auditoría y el control de la cuota de uso mensual.
+
+\subsection{Estructura del Documento}
+
+\begin{lstlisting}[language=json, caption=Ejemplo de documento en api\_requests]
+{
+  "_id": ObjectId("672f3b12a1b2c3d4e5f67890"),
+  "station": {
+    "_id": ObjectId("672f3a4d1b5e8a4a2c98d09f"),
+    "Code": "89055",
+    "OACI": "SAWB",
+    "Name": "BASE MARAMBIO",
+    "Province": "ANTARTIDA",
+    "Latitude": -64.2333,
+    "Longitude": -56.6167,
+    "Altitude": 198
+  },
+  "timestamp": ISODate("2025-11-08T14:30:00Z"),
+  "isScheduled": true,
+  "success": true,
+  "message": "OK"
+}
+\end{lstlisting}
+
+\section{Operaciones Implementadas}
+
+\subsection{Insertar Registro (`InsertOneAsync`)}
+
+Utilizado por el colector automático para registrar cada intento de conexión con la API, independientemente de si tuvo éxito o falló.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+await Logs.InsertOneAsync(log);
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.api_requests.insertOne({
+    "station": {
+        "_id": ObjectId("672f3a4d1b5e8a4a2c98d09f"),
+        "Code": "89055",
+        "Name": "BASE MARAMBIO",
+        // ... Resto de los campos ...
+    },
+    "timestamp": new Date(),
+    "isScheduled": true,
+    "success": true,
+    "message": "OK"
+})
+    \end{lstlisting}
+\end{itemize}
+\newpage
+\subsection{Leer Registros por Mes (`Find` con filtro de fecha)}
+
+Utilizado para consultar el historial de llamadas realizadas en un período específico (por ejemplo, un mes calendario).
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+var start = new DateTime(year, month, 1);
+var end = start.AddMonths(1);
+var filter = Builders<ApiRequestLog>.Filter.Gte(l => l.Timestamp, start) &
+             Builders<ApiRequestLog>.Filter.Lt(l => l.Timestamp, end);
+
+await Logs.Find(filter).ToListAsync();
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.api_requests.find({
+    "timestamp": {
+        "$gte": ISODate("2025-11-01T00:00:00Z"),
+        "$lt": ISODate("2025-12-01T00:00:00Z")
+    }
+})
+    \end{lstlisting}
+\end{itemize}
+
+\subsection{Contar Llamadas Mensuales (`CountDocumentsAsync`)}
+
+Operación crítica utilizada antes de cada ciclo de sondeo para verificar si se ha alcanzado el límite mensual de 500 llamadas a la API gratuita.
+
+\begin{itemize}
+    \item \textbf{C\# (Driver):}
+    \begin{lstlisting}[language={[Sharp]C}]
+var start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+var end = start.AddMonths(1);
+var filter = Builders<ApiRequestLog>.Filter.Gte(l => l.Timestamp, start) &
+             Builders<ApiRequestLog>.Filter.Lt(l => l.Timestamp, end);
+
+await Logs.CountDocumentsAsync(filter);
+    \end{lstlisting}
+    \item \textbf{Mongo Shell:}
+    \begin{lstlisting}[language=javascript]
+db.api_requests.countDocuments({
+    "timestamp": {
+        "$gte": ISODate("2025-11-01T00:00:00Z"),
+        "$lt": ISODate("2025-12-01T00:00:00Z")
+    }
+})
+    \end{lstlisting}
+\end{itemize}
+
+\end{document}
